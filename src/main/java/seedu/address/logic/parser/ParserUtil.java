@@ -29,6 +29,7 @@ import seedu.address.model.tag.Tag;
 public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index is not a non-zero unsigned integer.";
+    public static final String MESSAGE_INVALID_RANGE = "Only one range is allowed.";
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
@@ -41,6 +42,41 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
+    }
+
+    /**
+     * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
+     * trimmed.
+     * @throws ParseException if the specified index is invalid (not non-zero unsigned integer).
+     */
+    public static Index[] parseIndexRange(String oneBasedIndexRange) throws ParseException {
+        String trimmedIndex = oneBasedIndexRange.trim();
+        String[] startEndRange = trimmedIndex.split("-");
+
+        if (startEndRange.length > 2) {
+            throw new ParseException(MESSAGE_INVALID_RANGE);
+        }
+
+        if (startEndRange.length == 1) {
+            Index fixedIndex = parseIndex(oneBasedIndexRange);
+            return new Index[]{fixedIndex, fixedIndex};
+        }
+
+        String startIndex = startEndRange[0];
+        startIndex = startIndex.trim();
+
+        String endIndex = startEndRange[1];
+        endIndex = endIndex.trim();
+
+        if (!StringUtil.isNonZeroUnsignedInteger(startIndex)
+                && !StringUtil.isNonZeroUnsignedInteger(endIndex)) {
+            throw new ParseException(MESSAGE_INVALID_INDEX);
+        }
+
+        Index startOneBased = Index.fromOneBased(Integer.parseInt(startIndex));
+        Index endOneBased = Index.fromOneBased(Integer.parseInt(endIndex));
+
+        return new Index[]{startOneBased, endOneBased};
     }
 
     /**
@@ -190,6 +226,23 @@ public class ParserUtil {
         return trimmedName;
     }
 
+
+    /**
+     * Parses a {@code String name}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code name} is invalid.
+     */
+    public static String parseEventName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.trim();
+        if (!Name.isValidName(trimmedName)) {
+            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
+        }
+        return trimmedName;
+    }
+
+
     /**
      * Parses a {@code String name}.
      * Leading and trailing whitespaces will be trimmed.
@@ -199,10 +252,6 @@ public class ParserUtil {
     public static String parseRecurName(String name) throws ParseException {
         requireNonNull(name);
         String trimmedName = name.trim();
-        //Add custom regex
-        if (!Name.isValidName(trimmedName)) {
-            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
-        }
         return trimmedName;
     }
 
@@ -236,6 +285,9 @@ public class ParserUtil {
         if (!file.exists()) {
             throw new ParseException("File not found!");
         }
+        if (!trimmedFilePath.matches("^.*\\.pdf$")) {
+            throw new ParseException("Only pdf files are allowed!");
+        }
         return file;
     }
 
@@ -245,6 +297,15 @@ public class ParserUtil {
      */
     public static String parseEventNote(String note) {
         //date can be null or empty as it is optional
+        String trimmedNote = note.trim();
+        return trimmedNote;
+    }
+
+    /**
+     * Parses a {@code String note}.
+     * Leading and trailing whitespaces will be trimmed.
+     */
+    public static String parseNoteContent(String note) {
         String trimmedNote = note.trim();
         return trimmedNote;
     }

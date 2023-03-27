@@ -7,6 +7,8 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import seedu.address.model.event.Consultation;
 import seedu.address.model.event.Lab;
+import seedu.address.model.event.Note;
+import seedu.address.model.event.NoteList;
 import seedu.address.model.event.Tutorial;
 import seedu.address.model.event.UniqueConsultationList;
 import seedu.address.model.event.UniqueLabList;
@@ -25,6 +27,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     private final UniqueTutorialList tutorials;
     private final UniqueLabList labs;
     private final UniqueConsultationList consultations;
+    private final NoteList notes;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -38,6 +41,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         tutorials = new UniqueTutorialList();
         labs = new UniqueLabList();
         consultations = new UniqueConsultationList();
+        notes = new NoteList();
     }
 
     public AddressBook() {}
@@ -73,7 +77,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Adds a student to a tutorial.
+     * Adds a student to a specific tutorial.
      *
      * @param toAdd the student to be added.
      * @param name the name of the tutorial that the student will be added into.
@@ -86,13 +90,11 @@ public class AddressBook implements ReadOnlyAddressBook {
                 break;
             }
         }
-        Tutorial added = original;
-        added.addStudent(toAdd);
-        tutorials.setTutorial(original, added);
+        original.addStudent(toAdd);
     }
 
     /**
-     * Adds a student to a lab.
+     * Adds a student to a specific lab.
      *
      * @param toAdd the student to be added.
      * @param name the name of the lab that the student will be added into.
@@ -111,9 +113,10 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Allows student to be assigned to a specific consultation
-     * @param toAdd
-     * @param name
+     * Adds a student to a specific consultation
+     *
+     * @param toAdd the student to be added.
+     * @param name the name of the consultation that the student will be added into.
      */
     public void addStudentToConsultation(Person toAdd, String name) {
         Consultation original = consultations.get(0);
@@ -288,6 +291,22 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void removeConsultation(Consultation key) {
         consultations.remove(key);
+    }
+
+    /**
+     * Returns true if a note with the same identity as {@code note} exists in the address book.
+     */
+    public boolean hasNote(Note note) {
+        requireNonNull(note);
+        return notes.contains(note);
+    }
+
+    /**
+     * Adds note to address book note list
+     * @param note The note to add.
+     */
+    public void addNote(Note note) {
+        notes.add(note);
     }
 
     //// util methods
