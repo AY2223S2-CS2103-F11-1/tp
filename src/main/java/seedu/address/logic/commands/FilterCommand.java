@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import seedu.address.commons.core.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
@@ -79,6 +80,14 @@ public class FilterCommand extends Command {
             break;
         }
          */
+        if (!metric.equals("performance") && !metric.equals("urgency")) {
+            throw new CommandException(Messages.MESSAGE_RESTRICTED_VALUE);
+        } else {
+            if (this.getThreshold() < 0 || this.getThreshold() > 100) {
+                Messages error = new Messages(0, 100);
+                throw new CommandException(error.MESSAGE_INVALID_VALUE);
+            }
+        }
 
         model.updateFilteredPersonList((person) -> filterMetric(person));
         return new CommandResult(MESSAGE_SUCCESS);

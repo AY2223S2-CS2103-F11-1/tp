@@ -3,8 +3,11 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
+import seedu.address.commons.core.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
+
+import java.util.HashSet;
 
 /**
  * Sorts students accordingly.
@@ -16,12 +19,13 @@ public class SortStudentCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Sorts all address book students.\n "
             + "Parameters: The group of students you wish to sort (either all, lab, tutorial or consultation), "
-            + "the metric to be sorted (either address, email, name, perfomance or remark), "
+            + "the metric to be sorted (either address, email, name, performance or remark), "
             + "and the desired order (either reverse or nonreverse)\n"
             + "For example: 'sort-student all name reverse' command will order all students in reverse-alphabetical "
             + "ordering of their names";
 
     public static final String MESSAGE_NOT_IMPLEMENTED_YET = "Sort command not implemented yet";
+    private static HashSet<String> validMetrics;
     private static String group;
     private static String metric;
     private static boolean isIncreasing;
@@ -36,6 +40,12 @@ public class SortStudentCommand extends Command {
         this.group = group;
         this.metric = metric;
         this.isIncreasing = isIncreasing;
+        this.validMetrics = new HashSet<>();
+        this.validMetrics.add("address");
+        this.validMetrics.add("email");
+        this.validMetrics.add("name");
+        this.validMetrics.add("remark");
+        this.validMetrics.add("performance");
     }
 
     /**
@@ -81,6 +91,10 @@ public class SortStudentCommand extends Command {
         }
 
          */
+        if (!validMetrics.contains(metric)) {
+            throw new CommandException(Messages.MESSAGE_RESTRICTED_VALUE);
+        }
+
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         model.updateSortAllPersonList(this.metric, this.isIncreasing);
         return new CommandResult(MESSAGE_SUCCESS);

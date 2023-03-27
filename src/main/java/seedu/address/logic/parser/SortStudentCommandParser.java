@@ -4,7 +4,9 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_SORT_STUDENT;
 
+import seedu.address.commons.core.Messages;
 import seedu.address.logic.commands.SortStudentCommand;
+import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
 
 /**
@@ -35,12 +37,15 @@ public class SortStudentCommandParser implements Parser<SortStudentCommand> {
             } else {
                 group = terms[GROUP_INDEX];
                 metric = terms[METRIC_INDEX];
+                if (!terms[ORDER_INDEX].equals("reverse") && !terms[ORDER_INDEX].equals("nonreverse")) {
+                    throw new CommandException(Messages.MESSAGE_RESTRICTED_VALUE);
+                }
                 increasingOrder = (terms[ORDER_INDEX].equals("reverse")) ? false : true;
+                return new SortStudentCommand(group, metric, increasingOrder);
             }
-        } catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException | CommandException ex) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                    SortStudentCommand.MESSAGE_USAGE), iae);
+                    SortStudentCommand.MESSAGE_USAGE), ex);
         }
-        return new SortStudentCommand(group, metric, increasingOrder);
     }
 }
